@@ -1,0 +1,23 @@
+#!/bin/bash
+
+apt update
+apt remove --purge dhcpcd-base -y
+apt install isc-dhcp-client -y
+
+if [ -f /etc/dhcp/dhclient.conf.bkp ]; then
+   cp /etc/dhcp/dhclient.conf.bkp /etc/dhcp/dhclient.conf
+else
+   cp /etc/dhcp/dhclient.conf /etc/dhcp/dhclient.conf.bkp
+fi
+
+echo "" >> /etc/dhcp/dhclient.conf
+echo "reject 192.168.0.0/24, 192.168.1.0/24;" >> /etc/dhcp/dhclient.conf
+
+cat << EOF > /etc/NetworkManager/conf.d/dhclient.conf
+[main]
+dhcp=dhclient
+EOF
+
+sudo cp /etc/apparmor.d/sbin.dhclient /etc/apparmor.d/local/sbin.dhclient
+
+reboot

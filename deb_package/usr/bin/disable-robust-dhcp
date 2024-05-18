@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -f /etc/dhcp/dhclient.conf.bkp ]; then
+   cp /etc/dhcp/dhclient.conf.bkp /etc/dhcp/dhclient.conf
+fi
+
+sudo rm -rf /etc/NetworkManager/conf.d/dhclient.conf
+
+echo "" | sudo tee /etc/apparmor.d/local/sbin.dhclient
+
+reboot

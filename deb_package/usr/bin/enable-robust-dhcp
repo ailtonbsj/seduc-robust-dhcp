@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$(id -u)" = "0" ]; then
+    echo "This command must be executed without root initially!"
+    exit 1
+fi
+
 apt update
 apt remove --purge dhcpcd-base -y
 apt install isc-dhcp-client -y
@@ -18,6 +23,8 @@ cat << EOF > /etc/NetworkManager/conf.d/dhclient.conf
 dhcp=dhclient
 EOF
 
-sudo cp /etc/apparmor.d/sbin.dhclient /etc/apparmor.d/local/sbin.dhclient
+cp /etc/apparmor.d/sbin.dhclient /etc/apparmor.d/local/sbin.dhclient
 
-reboot
+if[ "$1" != "--no-reboot" ]; then
+   reboot
+fi

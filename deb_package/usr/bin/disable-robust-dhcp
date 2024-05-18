@@ -1,11 +1,18 @@
 #!/bin/bash
 
+if [ "$(id -u)" = "0" ]; then
+    echo "This command must be executed without root initially!"
+    exit 1
+fi
+
 if [ -f /etc/dhcp/dhclient.conf.bkp ]; then
    cp /etc/dhcp/dhclient.conf.bkp /etc/dhcp/dhclient.conf
 fi
 
-sudo rm -rf /etc/NetworkManager/conf.d/dhclient.conf
+rm -rf /etc/NetworkManager/conf.d/dhclient.conf
 
-echo "" | sudo tee /etc/apparmor.d/local/sbin.dhclient
+echo "" | tee /etc/apparmor.d/local/sbin.dhclient
 
-reboot
+if[ "$1" != "--no-reboot" ]; then
+   reboot
+fi
